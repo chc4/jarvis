@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local contents  = table.concat({select(2, ...)}, ' ')
+local contents  = table.concat({select(3, ...)}, ' ')
 local data      = {}
 local variables = {}
 local ops       = {}

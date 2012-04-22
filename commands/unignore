@@ -1,0 +1,21 @@
+#!/usr/bin/env lua
+
+local _, level, who = ...
+local json          = require 'json'
+
+local function setIgnore(who, what)
+    local file = io.open('data/ignore.json')
+    local data = json.decode(file:read())
+    file:close()
+    file = io.open('data/ignore.json', 'w')
+
+    data[who]  = what
+    file:write(json.encode(data))
+    file:close()
+end
+
+if tonumber(level) == 1 then
+    setIgnore(who, nil)
+end
+
+print(who .. " has been unignored.")

@@ -5,7 +5,7 @@ local http = require 'socket.http'
 local json = require '../lib/json'
 
 -- get data
-local subject = table.concat({select(2, ...)}, '_')
+local subject = table.concat({select(3, ...)}, '_')
 if subject == ''then
     print("This command requires an argument")
 else
