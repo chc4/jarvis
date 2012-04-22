@@ -1,11 +1,11 @@
-# cambot
+# saboteur
 ## Summary
-Camoy's personal bot written in Lua.
+A feature-full bot based on the cambot core.
 
 ## Installation
 Just clone it!
 
-    $ git clone git://github.com/Camoy/cambot.git
+    $ git clone git://github.com/Camoy/saboteur.git
 
 Also make sure that you have LuaSocket and LuaIRC installed.  I suggest installing LuaSocket via LuaRocks.
 
@@ -21,7 +21,7 @@ Run the main.lua file inside of the root folder.
     $ lua main.lua
 
 ## Usage
-Commands can be written in any language and are included in the commands folder.  Remember to set the file to executable (`chmod 755 command`) or else cambot won't be able to run it.  As soon as a command is in that folder, it can be used by cambot without a restart.
+See the __cambot__ repository.
 
 ## License
-cambot is under the zlib licensed.
+saboteur is under the zlib licensed.
