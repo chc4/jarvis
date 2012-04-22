@@ -1,0 +1,21 @@
+#!/usr/bin/env lua
+
+-- modules
+local http = require 'socket.http'
+local url  = require 'socket.url'
+local json = require 'json'
+
+-- get data
+local result
+local subject = table.concat({select(3, ...)}, ' ')
+local suc = pcall(function()
+    result = http.request('http://www.xkcd.com/' .. (subject and subject .. '/' or '') ..'info.0.json')
+    result = json.decode(result)
+    result = result.title .. ": " .. result.img
+end)
+
+if suc then
+    print(result)
+else
+    print("Invalid comic")
+end

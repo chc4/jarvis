@@ -1,0 +1,23 @@
+#!/usr/bin/env lua
+
+-- modules
+local http = require 'socket.http'
+local url  = require 'socket.url'
+local json = require 'json'
+
+-- get data
+local subject = table.concat({select(3, ...)}, ' ')
+
+if not subject:match("%w") then
+    print("This command requires an argument")
+else
+    local result = http.request('http://www.google.com/ig/calculator?q=' .. url.escape(subject))
+    local result = json.decode(result)
+    local err    = result.error
+
+    if err ~= "" then
+        print("An error occured")
+    else
+        print(result.lhs .. " is " .. result.rhs)
+    end
+end

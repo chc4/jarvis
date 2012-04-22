@@ -2,15 +2,16 @@
 
 -- modules
 local http = require 'socket.http'
-local json = require '../lib/json'
+local json = require 'json'
 
 -- get data
 local subject = table.concat({select(3, ...)}, '_')
-if subject == ''then
+
+if not subject:match("%w") then
     print("This command requires an argument")
 else
     local result = http.request('http://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&format=json&titles=' .. subject)
-    local result = json:decode(result)
+    local result = json.decode(result)
     local result = select(2, next(result.query.pages))
 
     -- format data
