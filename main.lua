@@ -45,7 +45,7 @@ local function executeCommand(who, from, msg)
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)
             if ret then
-                irc.say(who, v(ret))
+                irc.say(who, v(who, msg))
                 break
             end
         end
