@@ -1,0 +1,14 @@
+#!/usr/bin/env lua
+
+-- modules
+local http = require 'socket.http'
+local json = require '../lib/json'
+
+-- get data
+local subject = table.concat({select(2, ...)}, '_')
+local result = http.request('http://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&format=json&titles=' .. subject)
+local result = json:decode(result)
+local result = select(2, next(result.query.pages))
+
+-- format data
+print(result.title, ': ', result.fullurl)
