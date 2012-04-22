@@ -1,9 +1,11 @@
 -- modules requirements
 local irc     = require 'irc'
-local NETWORK = 'irc.freenode.org'
-local CHANNEL = {'##codelab'}
+local NETWORK = 'irc.freenode.net'
+local CHANNEL = {'##mustardsgrounds'}
 local PRELUDE = '!'
-local NICK    = 'cambot'
+local NICK    = 'saboteur'
+local IGNORED = {'Frypanman'}
+ADMINS	      = {'KnightMustard', 'camoy'}
 
 -- load passive matching
 local passive = loadfile('passive.lua')()
@@ -16,10 +18,15 @@ function string:split(sep)
 end
 
 local function executeCommand(who, from, msg)
+    local log = io.open(who ..".txt", "a")
+    log:write(os.date() .." [".. from .."]: " .. msg .."\n")
+    log:close()
+
     local command, arg = msg:match('^%' .. PRELUDE .. '(%w+)%s*(.*)')
 
     -- command exists
-    if command then
+    if command and IGNORED[from] == nil then
+	print(from)
         local fcommand = io.open('commands/' .. command)
         if arg then arg = arg:split ' ' end
 
@@ -41,6 +48,26 @@ local function executeCommand(who, from, msg)
             result:close()
         end
     -- check for passive matches
+    elseif command == 'ignore' and ADMINS[from] then
+	for c, v in ipairs(arg) do
+	    IGNORED[v] = true
+	    irc.say(chan, v .." has been successfully ignored.")
+	end
+    elseif command == 'unignore' and ADMINS[from] then
+	    for c, v in ipairs(arg) do
+		IGNORED[v] = nil
+		irc.say(chan, v .." has been successfully unignored.")
+	    end
+
+    elseif command == 'part' and ADMINS[from] then
+	irc.part(who)
+
+    elseif command == 'join' and ADMINS[from] then
+	irc.join(msg)
+
+    elseif command == 'quit' and ADMINS[from] then
+	irc.quit()
+
     else
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)
@@ -66,6 +93,18 @@ end)
 
 irc.register_callback("private_msg", function(from, msg)
     executeCommand(from, from, msg)
+end)
+
+irc.register_callback("join", function(chan, user)
+    local log = io.open(chan ..".txt", "a")
+    log:write(os.date() .. " ".. user .." has joined the channel \n")
+    log:close()
+end)
+
+irc.register_callback("part", function(chan, user)
+local log = io.open(chan ..".txt", "a")
+    log:write(os.date() .." ".. user .." has lefted the channel \n")
+    log:close()
 end)
 
 irc.connect {
