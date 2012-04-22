@@ -16,6 +16,8 @@ end
 
 if tonumber(level) == 1 then
     setIgnore(who, true)
+    print(who .. " has been ignored.")
+else
+    print("Insufficient permissions")
 end
 
-print(who .. " has been ignored.")

@@ -7,13 +7,14 @@ Just clone it!
 
     $ git clone git://github.com/Camoy/saboteur.git
 
-Also make sure that you have LuaSocket, LuaJSON, and LuaIRC installed.  I suggest installing LuaSocket & LuaJSON via LuaRocks.
+There are some dependencies that we suggest you install via LuaRocks.  Trust us, it's easier.
 
     $ # run these as root for proper install
     $ luarocks install luasocket
     $ luarocks install luajson
+    $ luarocks install luafilesystem
 
-LuaIRC can be installed like so:
+LuaIRC isn't a rock (sadfaic), but can be installed like so:
 
     $ git clone git://github.com/doy/luairc.git && cd luairc && sudo make install
 

@@ -16,6 +16,8 @@ end
 
 if tonumber(level) == 1 then
     setIgnore(who, nil)
+    print(who .. " has been unignored.")
+else
+    print("Insufficient permissions")
 end
 
-print(who .. " has been unignored.")
