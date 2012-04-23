@@ -2,7 +2,7 @@
 local irc     = require 'irc'
 local lfs     = require 'lfs'
 local json    = require 'json'
-local NETWORK = 'irc.freenode.org'
+local NETWORK = 'irc.freenode.net'
 local LOG     = true
 local PRELUDE = '!'
 local NICK    = 'saboteur'
