@@ -5,7 +5,7 @@
 -- Copyright 2012, Cameron Moy <cameronmmoy@gmail.com>
 -- Released under the zlib license.
 
-local str    = table.concat({select(2, ...)}, ' ')
+local str    = table.concat({select(3, ...)}, ' ')
 local result = {}
 local suc
 local err

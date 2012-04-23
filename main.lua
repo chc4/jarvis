@@ -43,6 +43,38 @@ local function log(what, chan)
     end
 end
 
+local function clearNote(who)
+    local file = io.open('data/note.json')
+    local data = json.decode(file:read())
+    file:close()
+    file = io.open('data/note.json', 'w')
+
+    data[who] = nil
+
+    file:write(json.encode(data))
+    file:close()
+end
+
+local function getNotes(who)
+    local file = io.open('data/note.json')
+    local data = json.decode(file:read())
+    file:close()
+
+    return data[who]
+end
+
+local function notifyNotes(who, where)
+    local notes = getNotes(who)
+
+    if notes then
+        for _,v in ipairs(notes) do
+            irc.say(where, v.from .. " at " .. v.time .. " left " .. who .. " a note: " .. v.note)
+        end
+
+        clearNote(who)
+    end
+end
+
 local function executeCommand(who, from, msg)
     local command, arg = msg:match('^%' .. PRELUDE .. '(%w+)%s*(.*)')
 
@@ -99,15 +131,18 @@ irc.register_callback("connect", function()
 end)
 
 irc.register_callback("channel_msg", function(chan, from, msg)
+    notifyNotes(from, chan.name)
     log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
     executeCommand(chan.name, from, msg)
 end)
 
 irc.register_callback("private_msg", function(from, msg)
+    notifyNotes(from, from)
     executeCommand(from, from, msg)
 end)
 
 irc.register_callback("join", function(chan, user)
+    notifyNotes(user, chan.name)
     log(os.date() .. " ".. user .." has joined the channel \n", chan)
 end)
 

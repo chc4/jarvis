@@ -1,0 +1,26 @@
+#!/usr/bin/env lua
+
+local args           = {...}
+local from, to, note = args[1], args[3], table.concat({select(4, unpack(args))}, " ")
+local json           = require 'json'
+
+local function addNote(to, from, note)
+    local file = io.open('data/note.json')
+    local data = json.decode(file:read())
+    local note = {from = from, note = note, time = os.date()}
+    file:close()
+    file = io.open('data/note.json', 'w')
+
+    if data[to] then
+        table.insert(data[to], note)
+    else
+        data[to] = {note}
+    end
+
+    file:write(json.encode(data))
+    file:close()
+end
+
+addNote(to, from, note)
+
+print "Noted added!"

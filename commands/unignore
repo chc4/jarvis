@@ -20,4 +20,3 @@ if tonumber(level) == 1 then
 else
     print("Insufficient permissions")
 end
-
