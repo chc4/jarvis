@@ -81,17 +81,13 @@ local function executeCommand(who, from, msg)
     -- command exists
     if command and not isIgnored(from) then
         local fcommand = io.open('commands/' .. command)
-        if arg then arg = arg:split ' ' end
+        --if arg then arg = arg:split ' ' end
+        arg = arg:gsub('"', '\\"')
 
         -- real command
         if fcommand then
-            -- escape " token
-            for i,v in ipairs(arg) do
-                arg[i] = '"' .. v:gsub('"', '\\"'):gsub('!', '\!') .. '"'
-            end
-
             -- get result
-            local result = io.popen(string.format('commands/%s %q %q ', command, from, ADMINS[from] or 3) .. table.concat(arg, ' '))
+            local result = io.popen(string.format('commands/%s %q %q %q', command, arg, from, ADMINS[from] or 0))
 
             -- say result
             irc.say(who, result:read())

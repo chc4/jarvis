@@ -1,22 +1,22 @@
 #!/usr/bin/env lua
 
-local _, level, who = ...
-local json          = require 'json'
+local msg, from, level = ...
+local json             = require 'json'
 
-local function setIgnore(who, what)
+local function setIgnore(user, val)
     local file = io.open('data/ignore.json')
     local data = json.decode(file:read())
     file:close()
     file = io.open('data/ignore.json', 'w')
 
-    data[who]  = what
+    data[user]  = val
     file:write(json.encode(data))
     file:close()
 end
 
 if tonumber(level) == 1 then
-    setIgnore(who, nil)
-    print(who .. " has been unignored.")
+    setIgnore(msg, nil)
+    print(from .. ": " .. msg .. " has been unignored.")
 else
-    print("Insufficient permissions")
+    print(from .. ": Insufficient permissions")
 end

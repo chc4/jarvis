@@ -1,12 +1,11 @@
 #!/usr/bin/env lua
 
-local args           = {...}
-local from, to, note = args[1], args[3], table.concat({select(4, unpack(args))}, " ")
-local json           = require 'json'
+local msg, from, level = ...
+local to, note         = msg:match "(%w+) ", msg:match "%w+ (.+)"
+local json             = require 'json'
 
 local function addNote(to, from, note)
     if from and to and note then
-        --print(from, to, note)
         local file = io.open('data/note.json')
         local data = json.decode(file:read())
         local note = {from = from, note = note, time = os.date()}
@@ -29,7 +28,7 @@ end
 local succ = addNote(to, from, note)
 
 if succ then
-    print "Noted added!"
+    print(from .. ": Note added!")
 else
-    print "Failed to add note."
+    print(from .. ": Failed to add note.")
 end

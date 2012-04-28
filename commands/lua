@@ -5,8 +5,8 @@
 -- Copyright 2012, Cameron Moy <cameronmmoy@gmail.com>
 -- Released under the zlib license.
 
-local str    = table.concat({select(3, ...)}, ' ')
-local result = {}
+local msg, from, level = ...
+local result           = {}
 local suc
 local err
 
@@ -21,7 +21,7 @@ local function copyTable(tab)
 end
 
 -- load chunk
-local chunk = loadstring(str)
+local chunk = loadstring(msg)
 
 -- construct sandbox
 local env = copyTable(_G)
@@ -75,4 +75,4 @@ else
     suc, err = false, 'Compile error.'
 end
 
-return not suc and print(err) or print(table.concat(result, '\t'))
+return not suc and print(from .. ": " .. err) or print(from .. ": " .. table.concat(result, '\t'))

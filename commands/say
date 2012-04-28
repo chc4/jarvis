@@ -1,3 +1,4 @@
 #!/usr/bin/env lua
 
-print(select(3, ...))
+local msg, from, level = ...
+print(from .. ": " .. msg)
