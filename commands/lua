@@ -21,7 +21,7 @@ local function copyTable(tab)
 end
 
 -- load chunk
-local chunk = loadstring(msg)
+local chunk = loadstring(msg:gsub('\\"', '"'))
 
 -- construct sandbox
 local env = copyTable(_G)
