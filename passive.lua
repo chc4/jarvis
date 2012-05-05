@@ -13,11 +13,5 @@ return {
     end,
     [wordPattern "hai"] = function()
         return "Why hello there!"
-    end,
-    [wordPattern "manual override 0247"] = function()
-        --Shhhhh, don't tell camoy I added this...He might get mad.
-        print("MANUAL OVERRIDE ACTIVATED. KILLING EVERYONE IN SIGHT.")
-        os.exit(0)
-        return "=D Nothing ever happened. Carry on."
     end
 }
