@@ -1,11 +1,11 @@
-# saboteur
+# jarvis
 ## Summary
-A feature-full bot based on the cambot core.
+A feature-full Lua IRC bot.
 
 ## Installation
 Just clone it!
 
-    $ git clone git://github.com/Camoy/saboteur.git
+    $ git clone git://github.com/Camoy/jarvis.git
 
 There are some dependencies that we suggest you install via LuaRocks.  Trust us, it's easier.
 
@@ -16,7 +16,8 @@ There are some dependencies that we suggest you install via LuaRocks.  Trust us,
 
 LuaIRC isn't a rock (sadfaic), but can be installed like so:
 
-    $ git clone git://github.com/doy/luairc.git && cd luairc && sudo make install
+    $ # remember to run make install as root
+    $ git clone git://github.com/doy/luairc.git && cd luairc && make install
 
 ## Running
 Run the main.lua file inside of the root folder.
@@ -29,4 +30,4 @@ Commands can be written in any language and are included in the commands folder.
 The passive.lua file returns a table where the keys are string patterns to be looked for when a user types something, and the value is a function whose return value should be something that cambot says.  Passed to that function as arguments are the username and the message itself.
 
 ## License
-saboteur is under the zlib licensed.
+jarvis is under the zlib license.
