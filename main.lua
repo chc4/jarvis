@@ -7,7 +7,7 @@ local LOG     = true
 local PRELUDE = '!'
 local NICK    = 'jarvis'
 local CHANNEL = {'##codelab'}
-local ADMINS  = {KnightMustard = 1, camoy = 1, bluh = 1}
+local ADMINS  = {KnightMustard = 1, camoy = 1, Socks = 1}
 
 -- load passive matching
 local passive = loadfile('passive.lua')()
