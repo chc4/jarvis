@@ -6,18 +6,18 @@ local url  = require 'socket.url'
 local json = require 'json'
 
 -- get data
-local subject = table.concat({select(3, ...)}, ' ')
+local msg, from = ...
 
-if not subject:match("%w") then
-    print("This command requires an argument")
+if not msg:match("%w") then
+    print(from .. ": This command requires an argument")
 else
-    local result = http.request('http://www.google.com/ig/calculator?q=' .. url.escape(subject))
+    local result = http.request('http://www.google.com/ig/calculator?q=' .. url.escape(msg))
     local result = json.decode(result)
     local err    = result.error
 
     if err ~= "" then
-        print("An error occured")
+        print(from .. ": An error occured")
     else
-        print(result.lhs .. " is " .. result.rhs)
+        print(from .. ": " .. result.lhs .. " is " .. result.rhs)
     end
 end

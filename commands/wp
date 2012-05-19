@@ -1,19 +1,20 @@
 #!/usr/bin/env lua
 
 -- modules
-local http = require 'socket.http'
-local json = require 'json'
+local http = require "socket.http"
+local json = require "json"
 
 -- get data
-local subject = table.concat({select(3, ...)}, '_')
+local msg, from, level = ...
+msg = msg:gsub(" ", "_")
 
-if not subject:match("%w") then
+if not msg:match("%w") then
     print("This command requires an argument")
 else
-    local result = http.request('http://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&format=json&titles=' .. subject)
+    local result = http.request("http://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&format=json&titles=" .. msg)
     local result = json.decode(result)
     local result = select(2, next(result.query.pages))
 
     -- format data
-    print(result.title, ': ', result.fullurl)
+    print(from .. ": " .. result.title .. " -> " .. result.fullurl)
 end

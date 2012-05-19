@@ -2,10 +2,10 @@
 local irc     = require 'irc'
 local lfs     = require 'lfs'
 local json    = require 'json'
-local NETWORK = 'irc.freenode.org'
+local NETWORK = 'irc.freenode.net'
 local LOG     = true
 local PRELUDE = '!'
-local NICK    = 'saboteur'
+local NICK    = 'jarvis'
 local CHANNEL = {'##codelab'}
 local ADMINS  = {KnightMustard = 1, camoy = 1, bluh = 1}
 
@@ -43,23 +43,51 @@ local function log(what, chan)
     end
 end
 
+local function clearNote(who)
+    local file = io.open('data/note.json')
+    local data = json.decode(file:read())
+    file:close()
+    file = io.open('data/note.json', 'w')
+
+    data[who] = nil
+
+    file:write(json.encode(data))
+    file:close()
+end
+
+local function getNotes(who)
+    local file = io.open('data/note.json')
+    local data = json.decode(file:read())
+    file:close()
+
+    return data[who]
+end
+
+local function notifyNotes(who, where)
+    local notes = getNotes(who)
+
+    if notes then
+        for _,v in ipairs(notes) do
+            irc.say(where, v.from .. " at " .. v.time .. " left " .. who .. " a note: " .. v.note)
+        end
+
+        clearNote(who)
+    end
+end
+
 local function executeCommand(who, from, msg)
     local command, arg = msg:match('^%' .. PRELUDE .. '(%w+)%s*(.*)')
 
     -- command exists
     if command and not isIgnored(from) then
         local fcommand = io.open('commands/' .. command)
-        if arg then arg = arg:split ' ' end
+        --if arg then arg = arg:split ' ' end
+        arg = arg:gsub('"', '\\"')
 
         -- real command
         if fcommand then
-            -- escape " token
-            for i,v in ipairs(arg) do
-                arg[i] = '"' .. v:gsub('"', '\\"'):gsub('!', '\!') .. '"'
-            end
-
             -- get result
-            local result = io.popen(string.format('commands/%s %q %q ', command, from, ADMINS[from] or 3) .. table.concat(arg, ' '))
+            local result = io.popen(string.format('commands/%s %q %q %q', command, arg, from, ADMINS[from] or 0))
 
             -- say result
             irc.say(who, result:read())
@@ -99,15 +127,18 @@ irc.register_callback("connect", function()
 end)
 
 irc.register_callback("channel_msg", function(chan, from, msg)
+    notifyNotes(from, chan.name)
     log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
     executeCommand(chan.name, from, msg)
 end)
 
 irc.register_callback("private_msg", function(from, msg)
+    notifyNotes(from, from)
     executeCommand(from, from, msg)
 end)
 
 irc.register_callback("join", function(chan, user)
+    notifyNotes(user, chan.name)
     log(os.date() .. " ".. user .." has joined the channel \n", chan)
 end)
 

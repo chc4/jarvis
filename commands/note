@@ -1,0 +1,34 @@
+#!/usr/bin/env lua
+
+local msg, from, level = ...
+local to, note         = msg:match "(%w+) ", msg:match "%w+ (.+)"
+local json             = require 'json'
+
+local function addNote(to, from, note)
+    if from and to and note then
+        local file = io.open('data/note.json')
+        local data = json.decode(file:read())
+        local note = {from = from, note = note, time = os.date()}
+        file:close()
+        file = io.open('data/note.json', 'w')
+
+        if data[to] then
+            table.insert(data[to], note)
+        else
+            data[to] = {note}
+        end
+
+        file:write(json.encode(data))
+        file:close()
+
+        return true
+    end
+end
+
+local succ = addNote(to, from, note)
+
+if succ then
+    print(from .. ": Note added!")
+else
+    print(from .. ": Failed to add note.")
+end
