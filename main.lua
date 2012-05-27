@@ -99,7 +99,7 @@ local function executeCommand(who, from, msg)
     if command and not isIgnored(from) then
         local fcommand = io.open("commands/" .. command)
         --if arg then arg = arg:split " " end
-        arg = arg:gsub(""", "\\"")
+        arg = arg:gsub("'", "\\'")
 
         -- real command
         if fcommand then
