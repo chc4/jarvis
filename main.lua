@@ -21,7 +21,7 @@ end
 
 local function isIgnored(who)
     local file   = io.open 'data/ignore.json'
-    local status = json.decode(file:read())[who]
+    local status = json.decode(file:read())[who:lower()]
     file:close()
 
     return status

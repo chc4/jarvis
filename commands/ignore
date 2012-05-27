@@ -9,7 +9,7 @@ local function setIgnore(user, val)
     file:close()
     file = io.open('data/ignore.json', 'w')
 
-    data[user]  = val
+    data[user:lower()]  = val
     file:write(json.encode(data))
     file:close()
 end
