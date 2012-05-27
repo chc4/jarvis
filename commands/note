@@ -12,10 +12,10 @@ local function addNote(to, from, note)
         file:close()
         file = io.open('data/note.json', 'w')
 
-        if data[to] then
-            table.insert(data[to], note)
+        if data[to:lower()] then
+            table.insert(data[to:lower()], note)
         else
-            data[to] = {note}
+            data[to:lower()] = {note}
         end
 
         file:write(json.encode(data))

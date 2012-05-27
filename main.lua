@@ -7,7 +7,7 @@ local LOG     = true
 local PRELUDE = '!'
 local NICK    = '_jarvis'
 local CHANNEL = {'##codelab'}
-local ADMINS  = {KnightMustard = 1, camoy = 1, bluh = 1}
+local ADMINS  = {KnightMustard = 1, camoy = 1, Socks = 1}
 
 -- load passive matching
 local passive = loadfile('passive.lua')()
@@ -21,7 +21,7 @@ end
 
 local function isIgnored(who)
     local file   = io.open 'data/ignore.json'
-    local status = json.decode(file:read())[who]
+    local status = json.decode(file:read())[who:lower()]
     file:close()
 
     return status
@@ -49,7 +49,7 @@ local function clearNote(who)
     file:close()
     file = io.open('data/note.json', 'w')
 
-    data[who] = nil
+    data[who:lower()] = nil
 
     file:write(json.encode(data))
     file:close()
@@ -60,7 +60,7 @@ local function getNotes(who)
     local data = json.decode(file:read())
     file:close()
 
-    return data[who]
+    return data[who:lower()]
 end
 
 local function notifyNotes(who, where)
