@@ -5,7 +5,7 @@ local json    = require 'json'
 local NETWORK = 'irc.freenode.net'
 local LOG     = true
 local PRELUDE = '!'
-local NICK    = 'jarvis'
+local NICK    = '_jarvis'
 local CHANNEL = {'##codelab'}
 local ADMINS  = {KnightMustard = 1, camoy = 1, bluh = 1}
 
