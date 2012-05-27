@@ -29,5 +29,30 @@ Commands can be written in any language and are included in the commands folder.
 
 The passive.lua file returns a table where the keys are string patterns to be looked for when a user types something, and the value is a function whose return value should be something that cambot says.  Passed to that function as arguments are the username and the message itself.
 
+## Configuration File
+
+Jarvis supports a JSON configuration file. The following example demonstrates
+use of all the available options and their possible values.
+
+    {
+      "network": "irc.freenode.net",
+      "prelude": "!",
+      "log": true,
+
+      "nick": "_jarvis",
+      "channel": [ "##codelab" ],
+      "admins": {
+        "KnightMustard": 1,
+        "dunsmoreb": 1,
+        "camoy": 1,
+        "Socks": 1
+      }
+    }
+
+Once you have made your configuration file, go into `main.lua` and change the
+following line, line seven, to the location of your configuration file.
+
+    local CONFIG_FILE = nil
+
 ## License
 jarvis is under the zlib license.
