@@ -4,7 +4,7 @@ local irc  = require "irc"
 local lfs  = require "lfs"
 local json = require "json"
 
-local CONFIG_FILE = nil
+local CONFIG_FILE = "jarvis.json"
 
 local settings = {}
 local function loadConfigFile(name)

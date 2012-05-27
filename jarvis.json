@@ -1,0 +1,14 @@
+{
+  "network": "irc.freenode.net",
+  "prelude": "!",
+  "log": true,
+
+  "nick": "_jarvis",
+  "channel": [ "##codelab" ],
+  "admins": {
+    "KnightMustard": 1,
+    "dunsmoreb": 1,
+    "camoy": 1,
+    "Socks": 1
+  }
+}
