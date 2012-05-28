@@ -1,12 +1,10 @@
 -- modules requirements
 
-local irc  = require "irc"
-local lfs  = require "lfs"
-local json = require "json"
+local irc    = require "irc"
+local lfs    = require "lfs"
+local json   = require "json"
+local CONFIG = "config.json"
 
-local CONFIG_FILE = "jarvis.json"
-
-local settings = {}
 local function loadConfigFile(name)
   if not name then return end
 
@@ -14,17 +12,10 @@ local function loadConfigFile(name)
   local data = json.decode(file:read("*all"))
   file:close()
 
-  -- read config values
-  local keys = {"network", "log", "prelude", "nick", "channel", "admins"}
-
-  for _, key in ipairs(keys) do
-    if data[key] then
-      settings[key] = data[key]
-    end
-  end
+  return data
 end
 
-loadConfigFile(CONFIG_FILE)
+local settings = loadConfigFile(CONFIG)
 
 -- load passive matching
 local passive = loadfile("passive.lua")()
