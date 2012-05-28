@@ -1,16 +1,33 @@
 -- modules requirements
-local irc     = require 'irc'
-local lfs     = require 'lfs'
-local json    = require 'json'
-local NETWORK = 'irc.freenode.net'
-local LOG     = true
-local PRELUDE = '!'
-local NICK    = '_jarvis'
-local CHANNEL = {'##codelab'}
-local ADMINS  = {KnightMustard = 1, camoy = 1, Socks = 1, dunsmoreb = 1}
+
+local irc  = require "irc"
+local lfs  = require "lfs"
+local json = require "json"
+
+local CONFIG_FILE = "jarvis.json"
+
+local settings = {}
+local function loadConfigFile(name)
+  if not name then return end
+
+  local file = io.open(name)
+  local data = json.decode(file:read("*all"))
+  file:close()
+
+  -- read config values
+  local keys = {"network", "log", "prelude", "nick", "channel", "admins"}
+
+  for _, key in ipairs(keys) do
+    if data[key] then
+      settings[key] = data[key]
+    end
+  end
+end
+
+loadConfigFile(CONFIG_FILE)
 
 -- load passive matching
-local passive = loadfile('passive.lua')()
+local passive = loadfile("passive.lua")()
 
 function string:split(sep)
     local sep, fields = sep or ":", {}
@@ -20,7 +37,7 @@ function string:split(sep)
 end
 
 local function isIgnored(who)
-    local file   = io.open 'data/ignore.json'
+    local file   = io.open "data/ignore.json"
     local status = json.decode(file:read())[who:lower()]
     file:close()
 
@@ -28,9 +45,9 @@ local function isIgnored(who)
 end
 
 local function log(what, chan)
-    local date  = os.date '*t'
-    date        = date.year .. '_' .. date.month .. '_' .. date.day
-    local filen = string.format('log/%s/%s', chan.name, date)
+    local date  = os.date "*t"
+    date        = date.year .. "_" .. date.month .. "_" .. date.day
+    local filen = string.format("log/%s/%s", chan.name, date)
     local file  = io.open(filen, "a")
 
     if not file then
@@ -44,10 +61,10 @@ local function log(what, chan)
 end
 
 local function clearNote(who)
-    local file = io.open('data/note.json')
+    local file = io.open("data/note.json")
     local data = json.decode(file:read())
     file:close()
-    file = io.open('data/note.json', 'w')
+    file = io.open("data/note.json", "w")
 
     data[who:lower()] = nil
 
@@ -56,7 +73,7 @@ local function clearNote(who)
 end
 
 local function getNotes(who)
-    local file = io.open('data/note.json')
+    local file = io.open("data/note.json")
     local data = json.decode(file:read())
     file:close()
 
@@ -76,18 +93,18 @@ local function notifyNotes(who, where)
 end
 
 local function executeCommand(who, from, msg)
-    local command, arg = msg:match('^%' .. PRELUDE .. '(%w+)%s*(.*)')
+    local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
 
     -- command exists
     if command and not isIgnored(from) then
-        local fcommand = io.open('commands/' .. command)
-        --if arg then arg = arg:split ' ' end
-        arg = arg:gsub('"', '\\"')
+        local fcommand = io.open("commands/" .. command)
+        --if arg then arg = arg:split " " end
+        arg = arg:gsub("'", "\\'")
 
         -- real command
         if fcommand then
             -- get result
-            local result = io.popen(string.format('commands/%s %q %q %q', command, arg, from, ADMINS[from] or 0))
+            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, settings.admins[from] or 0))
 
             -- say result
             irc.say(who, result:read())
@@ -111,14 +128,14 @@ end
 -- connect callback
 irc.register_callback("connect", function()
     -- join CHANNEL
-    for q,r in ipairs(CHANNEL) do
+    for q,r in ipairs(settings.channel) do
         -- logs
-        local path = 'log/' .. r
+        local path = "log/" .. r
 
         if not lfs.chdir(path) then
             lfs.mkdir(path)
         else
-            lfs.chdir '../..'
+            lfs.chdir "../.."
         end
 
         -- join
@@ -147,6 +164,6 @@ irc.register_callback("part", function(chan, user)
 end)
 
 irc.connect {
-    network = NETWORK,
-    nick = NICK
+    network = settings.network,
+    nick = settings.nick
 }
