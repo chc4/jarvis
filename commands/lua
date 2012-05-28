@@ -63,7 +63,7 @@ local function callSandbox(str)
     -- no compliation errors
     if chunk then
         -- prevent hanging
-        debug.sethook(handleError, '', 10000)
+        debug.sethook(handleError, 'l', 10000)
 
         -- run chunk
         suc, err = pcall(setfenv(chunk, env))

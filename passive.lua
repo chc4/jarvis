@@ -10,8 +10,5 @@ return {
     end,
     [wordPattern "rawr"] = function()
         return "I think that means 'I love you' in dinosaur..."
-    end,
-    [wordPattern "hai"] = function()
-        return "Why hello there!"
     end
 }
