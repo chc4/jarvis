@@ -27,6 +27,13 @@ function string:split(sep)
     return fields
 end
 
+function table.contains(t, v)
+  for _, tv in ipairs(t) do
+    if tv == v then return true end
+  end
+  return false
+end
+
 local function isIgnored(who)
     local file   = io.open "data/ignore.json"
     local status = json.decode(file:read())[who:lower()]
