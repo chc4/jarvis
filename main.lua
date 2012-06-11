@@ -1,18 +1,16 @@
--- modules requirements
-
 local irc    = require "irc"
 local lfs    = require "lfs"
 local json   = require "json"
 local CONFIG = "config.json"
 
 local function loadConfigFile(name)
-  if not name then return end
+    if not name then return end
 
-  local file = io.open(name)
-  local data = json.decode(file:read("*all"))
-  file:close()
+    local file = io.open(name)
+    local data = json.decode(file:read("*all"))
+    file:close()
 
-  return data
+    return data
 end
 
 local settings = loadConfigFile(CONFIG)
@@ -28,10 +26,9 @@ function string:split(sep)
 end
 
 function table.contains(t, v)
-  for _, tv in ipairs(t) do
-    if tv == v then return 1 end
-  end
-  return 0
+    for _, tv in ipairs(t) do
+        if tv == v then return true end
+    end
 end
 
 local function isIgnored(who)
@@ -102,17 +99,17 @@ local function executeCommand(who, from, msg)
         -- real command
         if fcommand then
             -- get result
-            local isadmin = table.contains(settings.admins, from)
-            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, isadmin))
+            local isAdmin = table.contains(settings.admins, from)
+            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, isAdmin and 1 or 0))
 
             -- say result
             irc.say(who, result:read())
-            
+
             -- close files
             fcommand:close()
             result:close()
         end
-    -- check for passive matches
+        -- check for passive matches
     else
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)
@@ -138,7 +135,7 @@ irc.register_callback("connect", function()
         end
 
         -- join
-	irc.join(r)
+        irc.join(r)
     end
 end)
 
