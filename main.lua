@@ -27,6 +27,13 @@ function string:split(sep)
     return fields
 end
 
+function table.contains(t, v)
+  for _, tv in ipairs(t) do
+    if tv == v then return 1 end
+  end
+  return 0
+end
+
 local function isIgnored(who)
     local file   = io.open "data/ignore.json"
     local status = json.decode(file:read())[who:lower()]
@@ -95,7 +102,8 @@ local function executeCommand(who, from, msg)
         -- real command
         if fcommand then
             -- get result
-            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, settings.admins[from] or 0))
+            local isadmin = table.contains(settings.admins, from)
+            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, isadmin))
 
             -- say result
             irc.say(who, result:read())
