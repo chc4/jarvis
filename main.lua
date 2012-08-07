@@ -87,6 +87,25 @@ local function notifyNotes(who, where)
     end
 end
 
+local addMessageCount;
+do
+    local file = io.open("data/count.json", "r");
+    countData = json.decode(file:read("*a"));
+    file:close();
+    local countSaveInterval = countData.interval;
+    function addMessageCount()
+        local count = countData.count;
+        count = count + 1;
+        countData.count = count;
+
+        if count % countSaveInterval == 0 then
+        	local file = io.open("data/count.json", "w");
+        	file:write(json.encode(countData));
+        	file:close();
+        end
+    end
+end
+
 local function executeCommand(who, from, msg)
     local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
     -- command exists
@@ -138,6 +157,7 @@ irc.register_callback("channel_msg", function(chan, from, msg)
     notifyNotes(from, chan.name)
     log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
     executeCommand(chan.name, from, msg)
+    addMessageCount();
 end)
 
 irc.register_callback("private_msg", function(from, msg)
