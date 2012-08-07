@@ -7,8 +7,8 @@ local function callSandbox(str)
     local suc
     local err
 
-    local function handleError()
-        error 'application caught hanging'
+    local function errorHandler()
+        error('application caught hanging', 0)
     end
 
     local function copyTable(tab)
@@ -85,7 +85,7 @@ local function callSandbox(str)
 
     result = #result > 0 and result or {"No output."}
 
-    return not suc and err or result
+    return not suc and {err} or result
 end
 
 return not suc and from .. ": " .. table.concat(callSandbox(msg), "\t")
