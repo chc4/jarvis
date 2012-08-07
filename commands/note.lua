@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 local msg, from, level = ...
 local to, note         = msg:match "(%w+) ", msg:match "%w+ (.+)"
 local json             = require 'json'
@@ -28,7 +26,7 @@ end
 local succ = addNote(to, from, note)
 
 if succ then
-    print(from .. ": Note added!")
+    return(from .. ": Note added!")
 else
-    print(from .. ": Failed to add note.")
+    return(from .. ": Failed to add note.")
 end

@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 -- modules
 local http = require 'socket.http'
 local url  = require 'socket.url'
@@ -9,15 +7,15 @@ local json = require 'json'
 local msg, from = ...
 
 if not msg:match("%w") then
-    print(from .. ": This command requires an argument")
+    return(from .. ": This command requires an argument")
 else
     local result = http.request('http://www.google.com/ig/calculator?q=' .. url.escape(msg))
     local result = json.decode(result)
     local err    = result.error
 
     if err ~= "" then
-        print(from .. ": An error occured")
+        return(from .. ": An error occured")
     else
-        print(from .. ": " .. result.lhs .. " is " .. result.rhs)
+        return(from .. ": " .. result.lhs .. " is " .. result.rhs)
     end
 end

@@ -89,27 +89,22 @@ end
 
 local function executeCommand(who, from, msg)
     local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
-
     -- command exists
     if command and not isIgnored(from) then
-        local fcommand = io.open("commands/" .. command)
-        --if arg then arg = arg:split " " end
-        arg = arg:gsub("'", "\\'")
+        local fcommand = loadfile("commands/" .. command .. ".lua")
 
         -- real command
         if fcommand then
             -- get result
             local isAdmin = table.contains(settings.admins, from)
-            local result = io.popen(string.format("commands/%s %q %q %q", command, arg, from, isAdmin and 1 or 0))
+            local result = fcommand(arg, from, isAdmin and 1 or 0)
 
             -- say result
-            irc.say(who, result:read())
-
-            -- close files
-            fcommand:close()
-            result:close()
+            irc.say(who, result)
+        else
+            irc.say(who, settings.no_command)
         end
-        -- check for passive matches
+    -- check for passive matches
     else
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)

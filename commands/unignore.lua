@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 local msg, from, level = ...
 local json             = require 'json'
 
@@ -15,8 +13,8 @@ local function setIgnore(user, val)
 end
 
 if tonumber(level) == 1 then
-    setIgnore(msg, true)
-    print(from .. ": " .. msg .. " has been ignored.")
+    setIgnore(msg, nil)
+    return(from .. ": " .. msg .. " has been unignored.")
 else
-    print(from .. ": Insufficient permissions")
+    return(from .. ": Insufficient permissions")
 end

@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 local http = require 'socket.http'
 local replace = {
     ["&"] = "%26",
@@ -54,13 +52,13 @@ if type(returns) == "table" then
     local q = from .. ": " .. url
     for i,x in pairs(returns) do
         if #x + #q > 400 then
-            print(q)
+            --return(q)
             q = "[ "..x:sub(1,-4).."]"
         else
             q = q.."   [ "..x:sub(1,-4).."]"
         end
     end
-    print(q)
+    return(q)
 else
-    print(from .. ": " .. url .. " : " .. returns)
+    return(from .. ": " .. url .. " : " .. returns)
 end

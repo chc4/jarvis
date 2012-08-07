@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 local msg, from = ...
 local json      = require 'json'
 local file      = io.open('data/help.json')
@@ -7,12 +5,12 @@ local data      = json.decode(file:read())
 local desc      = data[msg]
 
 if desc then
-    print(from .. ": " .. msg .. " -> " .. desc)
+    return(from .. ": " .. msg .. " -> " .. desc)
 elseif msg == "" then
     local commands = {}
     for k,_ in pairs(data) do table.insert(commands, k) end
 
-    print(from .. ": Commands -> " .. table.concat(commands, ", "))
+    return(from .. ": Commands -> " .. table.concat(commands, ", "))
 else
-    print(from .. ": That command doesn't have a help entry")
+    return(from .. ": That command doesn't have a help entry")
 end

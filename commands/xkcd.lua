@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 -- modules
 local http = require 'socket.http'
 local url  = require 'socket.url'
@@ -15,7 +13,7 @@ local suc = pcall(function()
 end)
 
 if suc then
-    print(from .. ": " .. result)
+    return(from .. ": " .. result)
 else
-    print(from .. ": Invalid comic")
+    return(from .. ": Invalid comic")
 end

@@ -1,4 +1,0 @@
-#!/usr/bin/env lua
-
-local msg, from = ...
-print(from .. ": " .. tostring(os.date()))

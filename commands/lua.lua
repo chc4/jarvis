@@ -1,15 +1,8 @@
-#!/usr/bin/env lua
-
 local msg, from, level = ...
 
 local function callSandbox(str)
     local result = {}
-    local suc
-    local err
-
-    local function handleError()
-        error 'application caught hanging'
-    end
+    local suc, err, co
 
     local function copyTable(tab)
         local new = {}
@@ -21,12 +14,16 @@ local function callSandbox(str)
         return new
     end
 
+    local function errorHandler()
+        error("application caught hanging", 0)
+    end
+
     -- load chunk
     local chunk, err = loadstring(str)
 
     -- construct sandbox
     local env = copyTable(_G)
-    local blacklist = {'getfenv', 'setfenv', 'io', 'newproxy', 'os', 'debug', 'load', 'loadfile', 'dofile', 'require', 'package', 'loadstring'}
+    local blacklist = {'getfenv', 'setfenv', 'io', 'newproxy', 'os', 'debug', 'load', 'loadfile', 'dofile', 'require', 'package', 'loadstring', 'lpeg', 'socket', 'lfs', 'irc', 'module', 'collectgarbage', 'gcinfo', 'jit', 'bit', 'json', 'arg'}
 
     -- blacklist evil functions
     for i,v in ipairs(blacklist) do
@@ -62,14 +59,15 @@ local function callSandbox(str)
 
     -- no compliation errors
     if chunk then
-        -- prevent hanging
-        debug.sethook(handleError, 'l', 10000)
+        suc, err = pcall(function()
+            local thread = coroutine.create(setfenv(chunk, env))
 
-        -- run chunk
-        suc, err = pcall(setfenv(chunk, env))
+            -- prevent hanging
+            debug.sethook(thread, errorHandler, '', 10000)
 
-        -- clear hook
-        debug.sethook()
+            -- call chunk
+            suc, err = coroutine.resume(thread)
+        end)
     else
         suc, err = false, err
     end
@@ -77,4 +75,4 @@ local function callSandbox(str)
     return not suc and err or (#result ~= 0  and table.concat(result, "\t") or "No output.")
 end
 
-return not suc and print(from .. ": " .. callSandbox(msg:gsub('\\"', '"')))
+return not suc and from .. ": " .. callSandbox(msg:gsub('\\"', '"'))

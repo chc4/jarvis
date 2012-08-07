@@ -1,4 +1,0 @@
-#!/usr/bin/env lua
-
-local msg, from, level = ...
-print(from .. ": " .. msg)
