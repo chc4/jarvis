@@ -90,7 +90,7 @@ end
 local addMessageCount;
 do
     local file = io.open("data/count.json", "r");
-    countData = json.decode(file:read("*a"));
+    local countData = json.decode(file:read("*a"));
     file:close();
     local countSaveInterval = countData.interval;
     function addMessageCount()
