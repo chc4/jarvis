@@ -1,14 +1,36 @@
 local msg, from, level = ...
-local LIMIT            = 10000
-local BLACKLIST        = {'getfenv', 'setfenv', 'io', 'newproxy', 'os', 'debug', 'load', 'loadfile', 'dofile', 'require', 'package', 'loadstring', 'lpeg', 'socket', 'lfs', 'irc', 'module', 'collectgarbage', 'gcinfo', 'jit', 'bit', 'json', 'arg'}
-
+local LIMIT            = 8000
+local BLACKLIST        = {'error', 'loadstring','xpcall', 'coroutine' ,'getfenv', 'setfenv', 'io', 'newproxy', 'os', 'debug', 'load', 'loadfile', 'dofile', 'require', 'package', 'lpeg', 'socket', 'lfs', 'irc', 'module', 'collectgarbage', 'gcinfo', 'jit', 'bit', 'json', 'arg', 'ltn12', 'mime'}
+local Reasons = {"Errors entire program",
+ "Calls enviorment without debug hook",
+ "Calls errorhandler without debug hook",
+ "Doesn't catch hanging" , 
+ "Stealing function enviorments", 
+ "Stealing function enviorments", 
+ "Obvious reasons", 
+ "Allows for escapment of sandbox",
+ "Obvious reasons", 
+ "Allows for clearing of debug hooks", 
+ "Obvious reasons", 
+ "Obvious reasons", 
+ "Obvious reaons", 
+ "Obvious reasons", 
+ "Doesn't load debug hook"};
 local function callSandbox(str)
     local result = {}
     local suc
     local err
+    local count = 0;
 
-    local function errorHandler()
-        error('application caught hanging', 0)
+    local function errorHandler(s)
+		if s=="call" then 
+		count=count+1
+		if count>400 then
+		error("Too many function calls!",0) --Catches recurserive functions
+		end
+		else
+        error('Application caught hanging!', 0) --Catches hanging
+		end
     end
 
     local function copyTable(tab)
@@ -53,7 +75,7 @@ local function callSandbox(str)
         end
     end
 
-    -- don't use __gc to escape
+    -- don't use __gc to escape sandbox
     env.setmetatable = function(tab, mt)
         mt.__gc = nil
 
@@ -69,13 +91,33 @@ local function callSandbox(str)
             end
         end
     end
+	
+	env.error = function(...)
+		error("Error has been called",0); --So it doesn't error entire bot
+	end
+	
+	env.loadstring = function(...)
+		local flag = false
+		local arg={...}
+		pcall(function()
+			if arg[1]:sub(1,1)==string.char(27) then --Disallows bytecode
+				flag=true
+			end
+		end)
+		if flag then
+			error("No bytecode!",0)
+		end
+		local l=loadstring(...);
+		setfenv(l,env) --Loads loadstring in the correct enviorment
+		return l
+	end
 
     -- no compliation errors
     if chunk then
         local thread = coroutine.create(setfenv(chunk, env))
 
         -- prevent hanging
-        debug.sethook(thread, errorHandler, '', LIMIT)
+        debug.sethook(thread, errorHandler, 'c', LIMIT) --Catches function calls
 
         -- call chunk
         suc, err = coroutine.resume(thread)
