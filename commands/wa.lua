@@ -1,16 +1,5 @@
 local http = require 'socket.http'
-local replace = {
-    ["&"] = "%26",
-    ["#"] = "%23",
-    ["?"] = "%3F",
-    ["="] = "%3D",
-    ["+"] = "%2B",
-    ["<"] = "%3C",
-    [">"] = "%3E",
-    ["@"] = "%40",
-    ["%"] = "%25",
-    [" "] = "+"
-}
+local urlsock = require "socket.url"
 
 function parsesubs(get)
     local rt = {}
@@ -31,9 +20,9 @@ function parsesubs(get)
 end
 
 local msg, from, level = ...
-msg = msg:gsub("(.)", function(d) return replace[d] or d end)
+local msg = urlsock.escape(msg:sub(1))
 
-local url     = "http://www.wolframalpha.com/input/?i=" .. msg:gsub("(.)", function(d) return d or replace[d] end)
+local url     = "http://www.wolframalpha.com/input/?i=".. msg
 local get     = http.request("http://api.wolframalpha.com/v2/query?input=" .. msg .. "&appid=4W38Y3-24ELW49Y9U&format=plaintext")
 local returns = "Error: could not resolve output" --oh my how embarrasing
 local related

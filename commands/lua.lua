@@ -2,18 +2,18 @@ local msg, from, level = ...
 local LIMIT            = 8000
 local BLACKLIST        = {'error', 'loadstring','xpcall', 'coroutine' ,'getfenv', 'setfenv', 'io', 'newproxy', 'os', 'debug', 'load', 'loadfile', 'dofile', 'require', 'package', 'lpeg', 'socket', 'lfs', 'irc', 'module', 'collectgarbage', 'gcinfo', 'jit', 'bit', 'json', 'arg', 'ltn12', 'mime'}
 local Reasons = {"Errors entire program",
- "Calls enviorment without debug hook",
+ "Calls environment without debug hook",
  "Calls errorhandler without debug hook",
  "Doesn't catch hanging" , 
- "Stealing function enviorments", 
- "Stealing function enviorments", 
+ "Stealing function environments", 
+ "Stealing function environments", 
  "Obvious reasons", 
- "Allows for escapment of sandbox",
+ "Allows for escapement of sandbox",
  "Obvious reasons", 
  "Allows for clearing of debug hooks", 
  "Obvious reasons", 
  "Obvious reasons", 
- "Obvious reaons", 
+ "Obvious reasons", 
  "Obvious reasons", 
  "Doesn't load debug hook"};
 local function callSandbox(str)
