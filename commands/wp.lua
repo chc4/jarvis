@@ -3,7 +3,7 @@ local http = require "socket.http"
 local json = require "json"
 
 -- get data
-local msg, from, level = ...
+local msg, from = ...
 msg = msg:gsub(" ", "_")
 
 if not msg:match("%w") then

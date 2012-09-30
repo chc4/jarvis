@@ -114,12 +114,16 @@ local function executeCommand(who, from, msg)
 
         -- real command
         if fcommand then
+            
             -- get result
-            local isAdmin = table.contains(settings.admins, from)
-            local result = fcommand(arg, from, isAdmin and 1 or 0)
-
-            -- say result
-            irc.say(who, result)
+            
+            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) then
+                irc.say(who, fcommand(arg, from))
+            elseif table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil then
+                irc.say(who, from .. ": " .. settings.need_permission)
+            else
+                irc.say(who, fcommand(arg, from))
+            end
         else
             irc.say(who, settings.no_command)
         end

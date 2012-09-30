@@ -19,7 +19,7 @@ function parsesubs(get)
     return rt
 end
 
-local msg, from, level = ...
+local msg, from = ...
 local msg = urlsock.escape(msg:sub(1))
 
 local url     = "http://www.wolframalpha.com/input/?i=".. msg

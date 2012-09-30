@@ -5,7 +5,7 @@ local json = require 'json'
 
 -- get data
 local result
-local msg, from, level = ...
+local msg, from = ...
 local suc = pcall(function()
     result = http.request("http://www.xkcd.com/" .. (msg and msg .. '/' or '') ..'info.0.json')
     result = json.decode(result)
