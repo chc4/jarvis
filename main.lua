@@ -117,10 +117,8 @@ local function executeCommand(who, from, msg)
             
             -- get result
             
-            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) then
-                irc.say(who, fcommand(arg, from))
-            elseif table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil then
-                irc.say(who, from .. ": " .. settings.need_permission)
+            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil or table.contains(settings.adminCommands, "!".. command) or settings.admins[who] and settings.admins[who]["!"..command] then
+                irc.say(who, from .. ": " .. settings.need_permission) 
             else
                 irc.say(who, fcommand(arg, from))
             end
