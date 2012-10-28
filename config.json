@@ -3,6 +3,7 @@
   "prelude": "!",
   "log": true,
   "word_patterns": true,
+  "debug": false,
 
   "nick": "_jarvis",
   "channel": [ "##codelab" ],

@@ -15,6 +15,10 @@ end
 
 local settings = loadConfigFile(CONFIG)
 
+if settings.debug == true then
+    irc.debug.enable()
+end
+
 -- load passive matching
 local passive = loadfile("passive.lua")()
 
