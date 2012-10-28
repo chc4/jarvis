@@ -1,20 +1,13 @@
-local msg, from, level = ...
+local msg, from = ...
 local json             = require 'json'
 
-local function setIgnore(user, val)
-    local file = io.open('data/ignore.json')
-    local data = json.decode(file:read())
-    file:close()
-    file = io.open('data/ignore.json', 'w')
+local file = io.open('data/ignore.json')
+local data = json.decode(file:read())
+file:close()
+file = io.open('data/ignore.json', 'w')
 
-    data[user:lower()]  = val
-    file:write(json.encode(data))
-    file:close()
-end
+data[msg:lower()]  = nil 
+file:write(json.encode(data))
+file:close()
+return(from .. ": " .. msg .. " has been unignored.")
 
-if tonumber(level) == 1 then
-    setIgnore(msg, nil)
-    return(from .. ": " .. msg .. " has been unignored.")
-else
-    return(from .. ": Insufficient permissions")
-end

@@ -2,6 +2,8 @@
   "network": "irc.freenode.net",
   "prelude": "!",
   "log": true,
+  "word_patterns": true,
+  "debug": false,
 
   "nick": "_jarvis",
   "channel": [ "##codelab" ],
@@ -11,6 +13,8 @@
     "camoy",
     "Socks"
   ],
+    "adminCommands": ["ignore", "unignore"],
 
-  "no_command": "Lol, that's not a command silly head!"
+  "no_command": "Lol, that's not a command silly head!",
+  "need_permission": "Insufficient permission"
 }
