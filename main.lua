@@ -126,7 +126,7 @@ local function executeCommand(who, from, msg)
             irc.say(who, settings.no_command)
         end
     -- check for passive matches
-    else
+    elseif settings.word_patterns == true then
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)
             if ret then

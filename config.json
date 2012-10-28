@@ -2,6 +2,7 @@
   "network": "irc.freenode.net",
   "prelude": "!",
   "log": true,
+  "word_patterns": true,
 
   "nick": "_jarvis",
   "channel": [ "##codelab" ],
