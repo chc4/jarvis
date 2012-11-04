@@ -13,7 +13,7 @@
     "camoy",
     "Socks"
   ],
-    "adminCommands": ["ignore", "unignore"],
+    "adminCommands": ["ignore", "unignore", "!lua"],
 
   "no_command": "Lol, that's not a command silly head!",
   "need_permission": "Insufficient permission"
