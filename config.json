@@ -4,6 +4,7 @@
   "log": true,
   "word_patterns": true,
   "debug": false,
+  "wolframalphaKey": "",
 
   "nick": "_jarvis",
   "channel": [ "##codelab" ],

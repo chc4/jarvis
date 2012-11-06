@@ -1,5 +1,21 @@
 local http = require 'socket.http'
 local urlsock = require "socket.url"
+local CONFIG = "config.json"
+
+local function loadConfigFile(name)
+    if not name then return end
+
+    local file = io.open(name)
+    local data = json.decode(file:read("*all"))
+    file:close()
+
+    return data
+end
+
+local settings = loadConfigFile(CONFIG)
+if settings.wolframalphaKey == "" or nil then
+    return("You need to get a api key from Wolframalpha to use this command")
+end
 
 function parsesubs(get)
     local rt = {}
@@ -23,7 +39,7 @@ local msg, from = ...
 local msg = urlsock.escape(msg:sub(1))
 
 local url     = "http://www.wolframalpha.com/input/?i=".. msg
-local get     = http.request("http://api.wolframalpha.com/v2/query?input=" .. msg .. "&appid=4W38Y3-24ELW49Y9U&format=plaintext")
+local get     = http.request("http://api.wolframalpha.com/v2/query?input=" .. msg .. "&appid=" .. settings.wolframalphaKey .. "&format=plaintext")
 local returns = "Error: could not resolve output" --oh my how embarrasing
 local related
 
