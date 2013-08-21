@@ -11,5 +11,8 @@
     "unignore":"Admin only for unignoring a person.  `unignore KnightMustard`",
     "wa":"Returns Wolfram Alpha information",
     "wp":"Returns a Wikipedia article link. `wp Cupcakes`",
-    "xkcd":"Returns the direct link to the specified xkcd comic. `xkcd 100` or `xkcd` gets current."
+    "xkcd":"Returns the direct link to the specified xkcd comic. `xkcd 100` or `xkcd` gets current.",
+    "g":"Returns a link to the first Google result of a query",
+    "join":"Instructs Jarvis to join a new channel",
+    "quit":"Shuts down Jarvis"
 }

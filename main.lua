@@ -91,25 +91,6 @@ local function notifyNotes(who, where)
     end
 end
 
-local addMessageCount;
-do
-    local file = io.open("data/count.json", "r");
-    local countData = json.decode(file:read("*a"));
-    file:close();
-    local countSaveInterval = countData.interval;
-    function addMessageCount()
-        local count = countData.count;
-        count = count + 1;
-        countData.count = count;
-
-        if count % countSaveInterval == 0 then
-        	local file = io.open("data/count.json", "w");
-        	file:write(json.encode(countData));
-        	file:close();
-        end
-    end
-end
-
 local function executeCommand(who, from, msg)
     local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
     -- command exists
@@ -121,7 +102,7 @@ local function executeCommand(who, from, msg)
             
             -- get result
             
-            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil or table.contains(settings.adminCommands, "!".. command) or settings.admins[who] and settings.admins[who]["!"..command] then
+            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil then
                 irc.say(who, from .. ": " .. settings.need_permission) 
             else
                 irc.say(who, fcommand(arg, from))
@@ -140,7 +121,6 @@ local function executeCommand(who, from, msg)
         end
     end
 end
-
 -- connect callback
 irc.register_callback("connect", function()
     -- join CHANNEL
@@ -163,7 +143,6 @@ irc.register_callback("channel_msg", function(chan, from, msg)
     notifyNotes(from, chan.name)
     log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
     executeCommand(chan.name, from, msg)
-    addMessageCount();
 end)
 
 irc.register_callback("private_msg", function(from, msg)
@@ -182,5 +161,6 @@ end)
 
 irc.connect {
     network = settings.network,
-    nick = settings.nick
+    nick = settings.nick,
+	realname = "LuaIRC"
 }

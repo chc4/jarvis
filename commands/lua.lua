@@ -24,12 +24,12 @@ local function callSandbox(str)
 
     local function errorHandler(s)
 		if s=="call" then 
-		count=count+1
-		if count>400 then
-		error("Too many function calls!",0) --Catches recurserive functions
-		end
+			count=count+1
+			if count>400 then
+				error("Too many function calls!",0) --Catches recurserive functions
+			end
 		else
-        error('Application caught hanging!', 0) --Catches hanging
+        	error('Application caught hanging!', 0) --Catches hanging
 		end
     end
 
@@ -77,7 +77,7 @@ local function callSandbox(str)
 
     -- don't use __gc to escape sandbox
     env.setmetatable = function(tab, mt)
-        mt.__gc = nil
+        rawset(mt,"__gc",nil)
 
         return setmetatable(tab, mt)
     end
@@ -100,7 +100,7 @@ local function callSandbox(str)
 		local flag = false
 		local arg={...}
 		pcall(function()
-			if arg[1]:sub(1,1)==string.char(27) then --Disallows bytecode
+			if string.sub(arg[1],1,1)==string.char(27) then --Disallows bytecode
 				flag=true
 			end
 		end)

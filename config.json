@@ -1,8 +1,8 @@
 {
   "network": "irc.freenode.net",
   "prelude": "!",
-  "log": true,
-  "word_patterns": true,
+  "log": false,
+  "word_patterns": false,
   "debug": false,
   "wolframalphaKey": "",
 
@@ -10,11 +10,12 @@
   "channel": [ "##codelab" ],
   "admins": [
     "KnightMustard",
-    "dunsmoreb",
+    "tiffany",
     "camoy",
-    "Socks"
+    "Socks",
+    "chc4"
   ],
-    "adminCommands": ["ignore", "unignore", "!lua"],
+    "adminCommands": ["ignore", "unignore", "lua", "join","leave"],
 
   "no_command": "Lol, that's not a command silly head!",
   "need_permission": "Insufficient permission"

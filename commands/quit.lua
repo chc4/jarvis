@@ -1,0 +1,1 @@
+error("Goodbye, cruel world!");
