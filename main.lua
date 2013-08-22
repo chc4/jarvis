@@ -54,10 +54,8 @@ function table.contains(t, v)
 end
 
 local function isIgnored(who)
-    local file   = io.open "data/ignore.json"
-    local status = json.decode(file:read())[who:lower()]
-    file:close()
-
+    local data   = loadfile("data/ignore.lua")()
+    local status = data[who:lower()]
     return status
 end
 

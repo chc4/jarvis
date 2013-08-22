@@ -1,7 +1,6 @@
 return function(msg, from)
     local json      = require 'json'
-    local file      = io.open('data/help.json')
-    local data      = json.decode(file:read("*all"))
+    local data      = loadfile('data/help.lua')()
     local desc      = data[msg]
 
     if desc then

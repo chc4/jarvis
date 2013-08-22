@@ -38,8 +38,17 @@ following line, to the location of your configuration file.
 
     local CONFIG = "PATH.lua"
 
+## Authors
+Jarvis is primarily maintained by camoy.  Thanks to others who have contributed to its development.
+
+* KnightMustard
+* dunsmoreb
+* chc4
+* JustAPerson
+* Nasuga
+
 ## License
-Copyright (C) 2013 camoy, chc4, Nasuga et al.
+Copyright (C) 2013 Jarvis Authors
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages

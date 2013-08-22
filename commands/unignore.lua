@@ -1,13 +1,8 @@
+local FS = require "file_slurp"
+
 return function(msg, from)
-    local json             = require 'json'
-
-    local file = io.open('data/ignore.json')
-    local data = json.decode(file:read())
-    file:close()
-    file = io.open('data/ignore.json', 'w')
-
+    local data = loadfile("data/ignore.lua")()
     data[msg:lower()]  = nil
-    file:write(json.encode(data))
-    file:close()
+    FS.writefile("data/ignore.lua", "return " .. table.tostring(data))
     return(from .. ": " .. msg .. " has been unignored.")
 end

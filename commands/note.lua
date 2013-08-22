@@ -1,23 +1,16 @@
 local json = require 'json'
 local hooks = require "hooks"
+local FS = require "file_slurp"
+require "table_util"
 
 local function clearNote(who)
-    local file = io.open("data/note.json")
-    local data = json.decode(file:read())
-    file:close()
-    file = io.open("data/note.json", "w")
-
+    local data = loadfile("data/note.lua")()
     data[who:lower()] = nil
-
-    file:write(json.encode(data))
-    file:close()
+    FS.writefile("data/note.lua", "return " .. table.tostring(data))
 end
 
 local function getNotes(who)
-    local file = io.open("data/note.json")
-    local data = json.decode(file:read())
-    file:close()
-
+    local data = loadfile("data/note.lua")()
     return data[who:lower()]
 end
 
@@ -35,11 +28,8 @@ end
 
 local function addNote(to, from, note)
     if from and to and note then
-        local file = io.open('data/note.json')
-        local data = json.decode(file:read())
+        local data = loadfile("data/note.lua")()
         local note = {from = from, note = note, time = os.date()}
-        file:close()
-        file = io.open('data/note.json', 'w')
 
         if data[to:lower()] then
             table.insert(data[to:lower()], note)
@@ -47,8 +37,7 @@ local function addNote(to, from, note)
             data[to:lower()] = {note}
         end
 
-        file:write(json.encode(data))
-        file:close()
+        FS.writefile("data/note.lua", "return " .. table.tostring(data))
 
         return true
     end
