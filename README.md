@@ -25,36 +25,36 @@ Run the main.lua file inside of the root folder.
     $ lua main.lua
 
 ## Usage
-Commands can be written in any language and are included in the commands folder.  Remember to set the file to executable (`chmod 755 command`) or else jarvis won't be able to run it.  As soon as a command is in that folder, it can be used by jarvis without a restart.  Passed to that executable is first the username who owns the message and second is the message itself.
-
-The Jarvis configuration file is config.json. You need to get an API key from developer.wolframalpha.com to and add it to be able to use the Wolframalpha on Jarvis.
+Commands are written in Lua and are included in the commands folder.
 
 The passive.lua file returns a table where the keys are string patterns to be looked for when a user types something, and the value is a function whose return value should be something that jarvis says.  Passed to that function as arguments are the username and the message itself.
 
 ## Configuration File
-
-Jarvis supports a JSON configuration file. The following example demonstrates
+Jarvis supports a Lua configuration file. The provided `config.lua` demonstrates
 use of all the available options and their possible values.
 
-    {
-      "network": "irc.freenode.net",
-      "prelude": "!",
-      "log": true,
-
-      "nick": "_jarvis",
-      "channel": [ "##codelab" ],
-      "admins": {
-        "KnightMustard": 1,
-        "dunsmoreb": 1,
-        "camoy": 1,
-        "Socks": 1
-      }
-    }
-
 Once you have made your configuration file, go into `main.lua` and change the
-following line, line seven, to the location of your configuration file.
+following line, to the location of your configuration file.
 
-    local CONFIG_FILE = nil
+    local CONFIG = "PATH.lua"
 
 ## License
-jarvis is under the zlib license.
+Copyright (C) 2013 camoy, chc4, Nasuga et al.
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.

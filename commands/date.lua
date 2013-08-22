@@ -1,2 +1,3 @@
-local msg, from = ...
-return(from .. ": " .. tostring(os.date()))
+return function(msg, from)
+    return from .. ": " .. tostring(os.date())
+end
