@@ -5,6 +5,7 @@ local hooks  = require "hooks"
 local CONFIG = "config.lua"
 local command_cache = {}
 
+-- TODO: abstract the config module or make it global or something
 local function loadConfigFile(name)
     if not name then
         return {}
@@ -38,6 +39,7 @@ end
 -- load passive matching
 local passive = loadfile("passive.lua")()
 
+-- TODO: get these helpers out of here
 function string:split(sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -53,36 +55,21 @@ function table.contains(t, v)
     end
 end
 
-local function isIgnored(who)
-    local data   = loadfile("data/ignore.lua")()
-    local status = data[who:lower()]
-    return status
-end
-
 local function executeCommand(who, from, msg)
     local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
-    -- command exists
-    if command and not isIgnored(from) then
+    if command and hooks.call("exe_command", who, command, arg, from) then
         local fcommand = command_cache[command]
-
-        -- real command
         if fcommand then
-            -- get result
-            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil then
-                irc.say(who, from .. ": " .. settings.need_permission)
-            else
-                local succ, err = pcall(function()
-                    irc.say(who, fcommand(arg, from, who))
-                end)
+            local succ, err = pcall(function()
+                irc.say(who, fcommand(arg, from, who))
+            end)
 
-                if not succ then
-                    irc.say(who, "This command errored with " .. err)
-                end
+            if not succ then
+                irc.say(who, "This command errored with " .. err)
             end
         else
             irc.say(who, settings.no_command)
         end
-        -- check for passive matches
     elseif settings.word_patterns then
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)

@@ -1,4 +1,5 @@
 local hook_list = {
+    exe_command = {},
     channel_msg = {},
     private_msg = {},
     join = {},
@@ -12,13 +13,17 @@ local function factory(hook)
 end
 
 return {
+    exe_command = factory "exe_command",
     channel_msg = factory "channel_msg",
     private_msg = factory "private_msg",
     join = factory "join",
     part = factory "part",
     call = function(hook_name, ...)
+        local ret = true
         for _,cb in ipairs(hook_list[hook_name]) do
-            cb(...)
+            -- TODO: pcall this cb since it could break
+            ret = ret and cb(...)
         end
+        return ret
     end
 }
