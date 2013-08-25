@@ -2,8 +2,9 @@ local irc    = require "irc"
 local lfs    = require "lfs"
 local json   = require "json"
 local hooks  = require "hooks"
-local CONFIG = "config.lua"
 local command_cache = {}
+
+CONFIG = "config.lua"
 
 -- TODO: abstract the config module or make it global or something
 local function loadConfigFile(name)
@@ -85,15 +86,6 @@ end
 irc.register_callback("connect", function()
     -- join CHANNEL
     for q,r in ipairs(settings.channel) do
-        -- logs
-        local path = "log/" .. r
-
-        if not lfs.chdir(path) then
-            lfs.mkdir(path)
-        else
-            lfs.chdir "../.."
-        end
-
         -- join
         irc.join(r)
     end

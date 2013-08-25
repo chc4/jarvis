@@ -16,6 +16,18 @@ local function log(what, chan)
     end
 end
 
+local config = loadfile(CONFIG)() --@camoy: I will set you on fire and jump on your grave. I hope you die a horrible death for using space indentation.
+for _,v in pairs(config.channel or {}) do
+    -- logs
+    local path = "log/" .. v
+
+    if not lfs.chdir(path) then
+        lfs.mkdir(path)
+    else
+        lfs.chdir "../.."
+    end
+end
+
 hooks.channel_msg(function(chan, from ,msg)
     log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
 end)
