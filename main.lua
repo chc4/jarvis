@@ -17,9 +17,9 @@ end
 local settings = loadConfigFile(CONFIG)
 
 local function source()
-    for file in lfs.dir("commands/") do
+    for file in lfs.dir("modules/") do
         local command_name = file:match("(%w+)%.lua")
-        local get_chunk = loadfile("commands/" .. file)
+        local get_chunk = loadfile("modules/" .. file)
         if get_chunk then
             local chunk = get_chunk()
             if chunk then

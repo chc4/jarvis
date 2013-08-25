@@ -16,9 +16,8 @@ local function log(what, chan)
     end
 end
 
-local config = loadfile(CONFIG)() --@camoy: I will set you on fire and jump on your grave. I hope you die a horrible death for using space indentation.
+local config = loadfile(CONFIG)()
 for _,v in pairs(config.channel or {}) do
-    -- logs
     local path = "log/" .. v
 
     if not lfs.chdir(path) then
