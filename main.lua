@@ -1,19 +1,36 @@
 local irc    = require "irc"
 local lfs    = require "lfs"
 local json   = require "json"
-local CONFIG = "config.json"
+local hooks  = require "hooks"
+local CONFIG = "config.lua"
+local command_cache = {}
 
+-- TODO: abstract the config module or make it global or something
 local function loadConfigFile(name)
-    if not name then return end
-
-    local file = io.open(name)
-    local data = json.decode(file:read("*all"))
-    file:close()
-
-    return data
+    if not name then
+        return {}
+    end
+    return loadfile(name)()
 end
 
 local settings = loadConfigFile(CONFIG)
+
+local function source()
+    for file in lfs.dir("commands/") do
+        local command_name = file:match("(%w+)%.lua")
+        local get_chunk = loadfile("commands/" .. file)
+        if get_chunk then
+            local chunk = get_chunk()
+            if chunk then
+                command_cache[command_name] = chunk
+            end
+        end
+    end
+    return "Sourced!"
+end
+
+command_cache.source = source
+source()
 
 if settings.debug == true then
     irc.debug.enable()
@@ -22,6 +39,7 @@ end
 -- load passive matching
 local passive = loadfile("passive.lua")()
 
+-- TODO: get these helpers out of here
 function string:split(sep)
     local sep, fields = sep or ":", {}
     local pattern = string.format("([^%s]+)", sep)
@@ -31,87 +49,28 @@ end
 
 function table.contains(t, v)
     for _, tv in ipairs(t) do
-        if tv == v then return true end
-    end
-end
-
-local function isIgnored(who)
-    local file   = io.open "data/ignore.json"
-    local status = json.decode(file:read())[who:lower()]
-    file:close()
-
-    return status
-end
-
-local function log(what, chan)
-    local date  = os.date "*t"
-    date        = date.year .. "_" .. date.month .. "_" .. date.day
-    local filen = string.format("log/%s/%s", chan.name, date)
-    local file  = io.open(filen, "a")
-
-    if not file then
-        file = io.open(filen, "w")
-    end
-
-    if file then
-        file:write(what)
-        file:close()
-    end
-end
-
-local function clearNote(who)
-    local file = io.open("data/note.json")
-    local data = json.decode(file:read())
-    file:close()
-    file = io.open("data/note.json", "w")
-
-    data[who:lower()] = nil
-
-    file:write(json.encode(data))
-    file:close()
-end
-
-local function getNotes(who)
-    local file = io.open("data/note.json")
-    local data = json.decode(file:read())
-    file:close()
-
-    return data[who:lower()]
-end
-
-local function notifyNotes(who, where)
-    local notes = getNotes(who)
-
-    if notes then
-        for _,v in ipairs(notes) do
-            irc.say(where, v.from .. " at " .. v.time .. " left " .. who .. " a note: " .. v.note)
+        if tv == v then
+            return true
         end
-
-        clearNote(who)
     end
 end
 
 local function executeCommand(who, from, msg)
     local command, arg = msg:match("^%" .. settings.prelude .. "(%w+)%s*(.*)")
-    -- command exists
-    if command and not isIgnored(from) then
-        local fcommand = loadfile("commands/" .. command .. ".lua")
-
-        -- real command
+    if command and hooks.call("exe_command", who, command, arg, from) then
+        local fcommand = command_cache[command]
         if fcommand then
-            
-            -- get result
-            
-            if table.contains(settings.adminCommands, command) and table.contains(settings.admins, from) == nil then
-                irc.say(who, from .. ": " .. settings.need_permission) 
-            else
-                irc.say(who, fcommand(arg, from))
+            local succ, err = pcall(function()
+                irc.say(who, fcommand(arg, from, who))
+            end)
+
+            if not succ then
+                irc.say(who, "This command errored with " .. err)
             end
         else
             irc.say(who, settings.no_command)
         end
-    -- check for passive matches
-    elseif settings.word_patterns == true then
+    elseif settings.word_patterns then
         for pattern,v in pairs(passive) do
             local ret = msg:match(pattern)
             if ret then
@@ -121,6 +80,7 @@ local function executeCommand(who, from, msg)
         end
     end
 end
+
 -- connect callback
 irc.register_callback("connect", function()
     -- join CHANNEL
@@ -140,27 +100,25 @@ irc.register_callback("connect", function()
 end)
 
 irc.register_callback("channel_msg", function(chan, from, msg)
-    notifyNotes(from, chan.name)
-    log(os.date() .." [".. from .."]: " .. msg .."\n", chan)
+    hooks.call("channel_msg", chan, from ,msg)
     executeCommand(chan.name, from, msg)
 end)
 
 irc.register_callback("private_msg", function(from, msg)
-    notifyNotes(from, from)
+    hooks.call("private_msg", from ,msg)
     executeCommand(from, from, msg)
 end)
 
 irc.register_callback("join", function(chan, user)
-    notifyNotes(user, chan.name)
-    log(os.date() .. " ".. user .." has joined the channel \n", chan)
+    hooks.call("join", chan, user)
 end)
 
 irc.register_callback("part", function(chan, user)
-    log(os.date() .." ".. user .." has left the channel \n", chan)
+    hooks.call("part", chan, user)
 end)
 
 irc.connect {
     network = settings.network,
     nick = settings.nick,
-	realname = "LuaIRC"
+    realname = "LuaIRC"
 }

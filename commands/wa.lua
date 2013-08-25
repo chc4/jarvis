@@ -1,21 +1,16 @@
 local http = require 'socket.http'
 local urlsock = require "socket.url"
-local CONFIG = "config.json"
+local CONFIG = "config.lua"
 
+-- TODO: DRY this up, it's in main too
 local function loadConfigFile(name)
-    if not name then return end
-
-    local file = io.open(name)
-    local data = json.decode(file:read("*all"))
-    file:close()
-
-    return data
+    if not name then
+        return {}
+    end
+    return loadfile(name)()
 end
 
 local settings = loadConfigFile(CONFIG)
-if settings.wolframalphaKey == "" or nil then
-    return("You need to get a api key from Wolframalpha to use this command")
-end
 
 function parsesubs(get)
     local rt = {}
@@ -35,35 +30,41 @@ function parsesubs(get)
     return rt
 end
 
-local msg, from = ...
-local msg = urlsock.escape(msg:sub(1))
+return function(msg, from)
+    local msg = urlsock.escape(msg:sub(1))
 
-local url     = "http://www.wolframalpha.com/input/?i=".. msg
-local get     = http.request("http://api.wolframalpha.com/v2/query?input=" .. msg .. "&appid=" .. settings.wolframalphaKey .. "&format=plaintext")
-local returns = "Error: could not resolve output" --oh my how embarrasing
-local related
-
-if get:find("<relatedexample input=\'") then
-    related = get:match("<relatedexample input=\'(.-)\'") or "error: could not resolve relatedexample"
-    returns = "Could not be found. Did you mean: \"" .. related .. "\"?"
-else
-    returns = parsesubs(get)
-    if #returns < 0 then
-        returns = "error: could not find related example to given input."
+    if settings.wolframalphaKey == "" or settings.wolframalphaKey == nil then
+        return("You need to get a api key from Wolframalpha to use this command")
     end
-end
 
-if type(returns) == "table" then
-    local q = from .. ": " .. url
-    for i,x in pairs(returns) do
-        if #x + #q > 400 then
-            --return(q)
-            q = "[ "..x:sub(1,-4).."]"
-        else
-            q = q.."   [ "..x:sub(1,-4).."]"
+
+    local url     = "http://www.wolframalpha.com/input/?i=".. msg
+    local get     = http.request("http://api.wolframalpha.com/v2/query?input=" .. msg .. "&appid=" .. settings.wolframalphaKey .. "&format=plaintext")
+    local returns = "Error: could not resolve output" --oh my how embarrasing
+    local related
+
+    if get:find("<relatedexample input=\'") then
+        related = get:match("<relatedexample input=\'(.-)\'") or "error: could not resolve relatedexample"
+        returns = "Could not be found. Did you mean: \"" .. related .. "\"?"
+    else
+        returns = parsesubs(get)
+        if #returns < 0 then
+            returns = "error: could not find related example to given input."
         end
     end
-    return(q)
-else
-    return(from .. ": " .. url .. " : " .. returns)
+
+    if type(returns) == "table" then
+        local q = from .. ": " .. url
+        for i,x in pairs(returns) do
+            if #x + #q > 400 then
+                --return(q)
+                q = "[ "..x:sub(1,-4).."]"
+            else
+                q = q.."   [ "..x:sub(1,-4).."]"
+            end
+        end
+        return(q)
+    else
+        return(from .. ": " .. url .. " : " .. returns)
+    end
 end
